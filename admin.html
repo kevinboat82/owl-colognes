@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owl Colognes | Admin Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --admin-bg: #050505;
+    }
+    body {
+      background: var(--admin-bg);
+    }
+    .admin-container {
+      padding: 120px 5% 50px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .admin-tabs {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .tab-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      padding: 10px 25px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .tab-btn.active {
+      background: var(--accent-gold);
+      color: black;
+      font-weight: 600;
+    }
+    .admin-section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    .admin-section.active {
+      display: block;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .data-table th, .data-table td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .data-table th {
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+    .action-btn {
+      padding: 5px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      border: 1px solid var(--glass-border);
+      background: rgba(255,255,255,0.05);
+      color: var(--text-primary);
+    }
+    .edit-btn:hover { background: #2a3a5a; }
+    .delete-btn:hover { background: #5a2a2a; }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent-gold);
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      color: white;
+      border-radius: 8px;
+    }
+    .modal-admin {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(5px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+    }
+    .modal-admin.active { display: flex; }
+    .modal-admin-content {
+      width: 500px;
+      padding: 40px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .stat-card {
+      padding: 25px;
+      text-align: center;
+    }
+    .stat-card h3 { font-size: 2.5rem; color: var(--accent-gold); margin-bottom: 5px; }
+    .stat-card p { font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <nav id="mainNav">
+    <div class="nav-container">
+      <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px;">
+        <img src="owl.png" alt="Logo" style="height: 35px;">
+        Owl <span>Colognes</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">View Store</a>
+        <a href="#" id="logoutBtn">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>Admin Dashboard</h1>
+      <button class="btn-primary" id="addNewBtn">+ Add Product</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card glass-panel">
+        <h3 id="statTotalProducts">0</h3>
+        <p>Total Products</p>
+      </div>
+      <div class="stat-card glass-panel">
+        <h3 id="statLowStock">0</h3>
+        <p>Low Stock Items</p>
+      </div>
+      <div class="stat-card glass-panel">
+        <h3 id="statTotalOrders">24</h3>
+        <p>Simulated Orders</p>
+      </div>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="tab-btn active" data-tab="products">Products</button>
+      <button class="tab-btn" data-tab="inventory">Inventory</button>
+      <button class="tab-btn" data-tab="orders">Orders</button>
+    </div>
+
+    <div id="productsSection" class="admin-section active">
+      <table class="data-table glass-panel">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="productTableBody"></tbody>
+      </table>
+    </div>
+
+    <div id="inventorySection" class="admin-section">
+      <table class="data-table glass-panel">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Current Stock</th>
+            <th>Status</th>
+            <th>Quick Update</th>
+          </tr>
+        </thead>
+        <tbody id="inventoryTableBody"></tbody>
+      </table>
+    </div>
+
+    <div id="ordersSection" class="admin-section">
+      <div class="glass-panel" style="padding: 40px; text-align: center;">
+        <h2 style="color: var(--accent-gold); margin-bottom: 20px;">Order Management</h2>
+        <p>All orders are currently handled via WhatsApp directly with the customer.</p>
+        <p style="margin-top: 10px; color: var(--text-secondary);">Future integration will sync WhatsApp orders here.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Form Modal -->
+  <div class="modal-admin" id="productFormModal">
+    <div class="modal-admin-content glass-panel">
+      <h2 id="modalTitle">Add New Product</h2>
+      <form id="productForm" style="margin-top: 20px;">
+        <input type="hidden" id="editId">
+        <div class="form-group">
+          <label>Product Name</label>
+          <input type="text" id="prodName" required>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="prodCategory">
+            <option value="men">Men</option>
+            <option value="women">Women</option>
+            <option value="unisex">Unisex</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Price ($)</label>
+          <input type="number" id="prodPrice" required>
+        </div>
+        <div class="form-group">
+          <label>Stock Quantity</label>
+          <input type="number" id="prodStock" required>
+        </div>
+        <div class="form-group">
+          <label>Image Path (e.g. assets/images/products/file.png)</label>
+          <input type="text" id="prodImage" placeholder="assets/images/products/...">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="prodDesc" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Theme Color (for card glow & bottle base)</label>
+          <input type="color" id="prodColor" value="#d4af37" style="height: 50px; cursor: pointer;">
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 30px;">
+          <button type="submit" class="btn-primary" style="flex: 1;">Save Product</button>
+          <button type="button" class="btn-secondary" id="closeFormBtn" style="flex: 1;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
