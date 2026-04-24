@@ -14,11 +14,6 @@
   <div class="bg-glow"></div>
   <div class="bg-glow-2"></div>
 
-  <!-- Global Discount Banner -->
-  <div id="discountBanner" class="discount-banner">
-    <span id="discountMsg"></span>
-  </div>
-
   <!-- Navigation -->
   <nav id="mainNav">
     <div class="nav-container" style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
@@ -50,7 +45,7 @@
       <p class="wishlist-empty" id="wishlistEmpty">Your wishlist is empty.<br>Add fragrances you'd love us to stock.</p>
     </div>
     <div class="wishlist-footer">
-      <a href="#" class="btn-primary" id="sendWishlistWA" style="width:100%;text-align:center;opacity:1;transform:none;animation:none;">
+      <a href="#" class="btn-primary hero-btn-override" id="sendWishlistWA">
         📱 Send Wishlist via WhatsApp
       </a>
     </div>
@@ -59,20 +54,38 @@
 
   <!-- Hero Section -->
   <section class="hero" id="hero">
-    <div class="hero-slideshow" id="heroSlideshow"></div>
-    <div class="hero-content">
-      <h1 class="hero-title">Experience the Art of <span>Scent</span></h1>
-      <p class="hero-subtitle">Curated Luxury Fragrances for the Discerning Soul</p>
-      <div class="hero-btns">
-        <a href="#collection" class="btn-primary">Explore Collection</a>
-        <a href="#request" class="btn-outline">Custom Request</a>
+    <canvas id="heroParticles"></canvas>
+    <p class="hero-eyebrow">Luxury Fragrances · Handpicked for You</p>
+    <h1>Scent of<br>Distinction</h1>
+    <p>Curated luxury fragrances for the bold and refined. Each bottle tells a story of elegance, crafted for those who dare to leave an impression.</p>
+    <a href="#collection" class="btn-primary">Explore Collection</a>
+  </section>
+
+  <!-- Why Owl Colognes -->
+  <section class="features-section" id="features">
+    <h2 class="section-title reveal">Why Owl <span style="color: var(--accent-gold);">Colognes</span></h2>
+    <div class="features-grid">
+      <div class="feature-card glass-panel reveal">
+        <div class="feature-icon">✦</div>
+        <h3>100% Authentic</h3>
+        <p>Every bottle is sourced directly from certified distributors. No imitations, no compromises — only the real thing.</p>
+      </div>
+      <div class="feature-card glass-panel reveal">
+        <div class="feature-icon">🌍</div>
+        <h3>Globally Sourced</h3>
+        <p>From Parisian ateliers to Arabian oud houses, we scour the world to bring you rare and timeless scents.</p>
+      </div>
+      <div class="feature-card glass-panel reveal">
+        <div class="feature-icon">🚀</div>
+        <h3>Swift Delivery</h3>
+        <p>Order via WhatsApp and receive your fragrance within Accra in 24 hours, or nationwide within 3–5 days.</p>
       </div>
     </div>
   </section>
 
   <!-- About Section -->
   <section class="about-section" id="about">
-    <div class="about-container glass-panel">
+    <div class="about-container glass-panel reveal">
       <div class="about-icon">🦉</div>
       <h2>The Owl's Promise</h2>
       <p>At Owl Colognes, we believe every scent is a signature. We source the world's finest fragrances — from the oud-rich bazaars of the Middle East to the lavender fields of Provence — so you don't have to. Can't find what you're looking for? Tell us, and we'll hunt it down.</p>
@@ -81,7 +94,7 @@
 
   <!-- Collection Section -->
   <section class="products" id="collection">
-    <h2 class="section-title">The Collection</h2>
+    <h2 class="section-title reveal">The Collection</h2>
     <div class="filter-bar">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="men">Men</button>
@@ -93,9 +106,73 @@
     </div>
   </section>
 
+  <!-- How It Works -->
+  <section class="how-section" id="howItWorks">
+    <h2 class="section-title reveal">How It <span style="color: var(--accent-gold);">Works</span></h2>
+    <div class="how-grid">
+      <div class="how-step reveal">
+        <div class="step-number">01</div>
+        <h3>Browse</h3>
+        <p>Explore our curated collection or request a specific fragrance you've been dreaming of.</p>
+      </div>
+      <div class="how-connector reveal">→</div>
+      <div class="how-step reveal">
+        <div class="step-number">02</div>
+        <h3>Order via WhatsApp</h3>
+        <p>Tap "Order Now" and you'll be connected directly with us on WhatsApp to confirm your purchase.</p>
+      </div>
+      <div class="how-connector reveal">→</div>
+      <div class="how-step reveal">
+        <div class="step-number">03</div>
+        <h3>Delivered to You</h3>
+        <p>We package your fragrance with care and deliver it right to your doorstep across Ghana.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials-section" id="testimonials">
+    <h2 class="section-title reveal">What Our <span style="color: var(--accent-gold);">Clients</span> Say</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card glass-panel reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"The Oud Maliki is absolutely divine. I've never received so many compliments on a fragrance before. Owl Colognes is my go-to."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">K</div>
+          <div>
+            <strong>Kwame A.</strong>
+            <span>Accra, Ghana</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card glass-panel reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Fast delivery and the packaging was beautiful. The Velvet Rose smells even better than I imagined. Will definitely order again!"</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">A</div>
+          <div>
+            <strong>Ama D.</strong>
+            <span>Kumasi, Ghana</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card glass-panel reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"I requested a niche fragrance and they sourced it within a week. The WhatsApp ordering is so convenient. Top-notch service."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">E</div>
+          <div>
+            <strong>Edem K.</strong>
+            <span>Takoradi, Ghana</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Request Section -->
   <section class="request-section" id="request">
-    <div class="request-container glass-panel">
+    <div class="request-container glass-panel reveal">
       <h2>Can't Find Your Scent?</h2>
       <p>Tell us which fragrance you desire, and we'll source it for you. Add it to your wishlist and we'll get back to you on availability and pricing.</p>
       <form class="request-form" id="requestForm">
@@ -108,10 +185,21 @@
         <div class="form-group">
           <textarea class="form-control" id="reqDetails" placeholder="Any details? (size, concentration, etc.)"></textarea>
         </div>
-        <button type="submit" class="btn-primary" style="opacity:1;transform:none;animation:none;border:none;cursor:pointer;">
+        <button type="submit" class="btn-primary hero-btn-override">
           Send Request via WhatsApp
         </button>
       </form>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-banner reveal">
+    <div class="cta-content">
+      <h2>Ready to Find Your Signature Scent?</h2>
+      <p>Chat with us on WhatsApp and let our fragrance experts guide you to the perfect bottle.</p>
+      <a href="https://wa.me/233504005055?text=Hi%20Owl%20Colognes!%20I%27d%20like%20to%20explore%20your%20fragrances." class="btn-primary hero-btn-override" target="_blank" rel="noopener">
+        💬 Chat With Us Now
+      </a>
     </div>
   </section>
 
@@ -126,10 +214,10 @@
         <div class="modal-info">
           <h2 id="modalTitle">Product Name</h2>
           <p class="modal-category" id="modalCategory">Category</p>
-          <p class="modal-price" id="modalPrice">$0.00</p>
+          <p class="modal-price" id="modalPrice">GH₵0.00</p>
           <p class="modal-description" id="modalDescription">Full description goes here.</p>
           <div class="modal-actions">
-            <button class="btn-primary" id="modalOrderBtn">Order Now via WhatsApp</button>
+            <button class="btn-primary hero-btn-override" id="modalOrderBtn">Order Now via WhatsApp</button>
             <button class="btn-icon" id="modalWishlistBtn">♡</button>
           </div>
         </div>
@@ -138,19 +226,26 @@
   </div>
 
   <!-- Footer -->
-  <footer style="padding: 60px 5% 40px; border-top: 1px solid var(--glass-border); text-align: center;">
-    <div class="footer-logo" style="margin-bottom: 20px;">Owl <span>Colognes</span></div>
-    <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 30px;">
-      <a href="#hero" style="color: var(--text-secondary); text-decoration: none;">Home</a>
-      <a href="#collection" style="color: var(--text-secondary); text-decoration: none;">Collection</a>
-      <a href="#about" style="color: var(--text-secondary); text-decoration: none;">Our Story</a>
-      <a href="admin.html" style="color: var(--accent-gold); text-decoration: none; font-weight: 600; opacity: 0.6;">Admin Dashboard</a>
+  <footer>
+    <div class="footer-logo">Owl <span>Colognes</span></div>
+    <div class="footer-links">
+      <a href="#hero">Home</a>
+      <a href="#collection">Collection</a>
+      <a href="#about">Our Story</a>
+      <a href="#request">Request</a>
+    </div>
+    <div class="footer-social">
+      <a href="https://wa.me/233504005055" target="_blank" rel="noopener" aria-label="WhatsApp" class="social-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.116.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.116-.198-.012-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.2-.33.065-.134.032-.248-.016-.348-.05-.099-.445-1.076-.612-1.47-.16-.389-.325-.335-.445-.34-.116-.007-.248-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.13 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+        </svg>
+      </a>
     </div>
     <p class="footer-text">© 2026 Owl Colognes. All rights reserved. Luxury, delivered.</p>
   </footer>
 
   <!-- WhatsApp FAB -->
-  <a href="https://wa.me/233000000000?text=Hi%20Owl%20Colognes!%20I%27d%20like%20to%20enquire%20about%20your%20fragrances." class="whatsapp-float" id="whatsappFloat" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <a href="https://wa.me/233504005055?text=Hi%20Owl%20Colognes!%20I%27d%20like%20to%20enquire%20about%20your%20fragrances." class="whatsapp-float" id="whatsappFloat" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 16 16">
       <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.116.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.116-.198-.012-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.2-.33.065-.134.032-.248-.016-.348-.05-.099-.445-1.076-.612-1.47-.16-.389-.325-.335-.445-.34-.116-.007-.248-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.13 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
     </svg>
