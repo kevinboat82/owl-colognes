@@ -1,21 +1,14 @@
+import { db, storage } from './firebase-config.js';
+import { 
+  collection, onSnapshot, query, orderBy, 
+  addDoc, updateDoc, deleteDoc, doc, serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { 
+  ref, uploadBytes, getDownloadURL 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
 // ========== DATA MANAGEMENT ==========
-const defaultProducts = [
-  { id: 1, name: 'Midnight Noir', category: 'men', price: 185, desc: 'Dark, bold, and unapologetically masculine. Notes of black pepper, leather & oud.', color: '#1a1a2e', stock: 12, image: 'assets/images/products/cologne_bottle_1_1776992778207.png' },
-  { id: 2, name: 'Rose Éternelle', category: 'women', price: 210, desc: 'A timeless floral symphony. Bulgarian rose, peony & musk.', color: '#2d1f2f', stock: 8, image: 'assets/images/products/perfume_bottle_2_1776992793413.png' },
-  { id: 3, name: 'Arcanum', category: 'unisex', price: 165, desc: 'Mysterious and artisanal. Lavender, sandalwood & amber.', color: '#1f2a1f', stock: 15, image: 'assets/images/products/perfume_bottle_3_1776992806434.png' },
-  { id: 4, name: 'Élégance Noir', category: 'men', price: 240, desc: 'Art Deco opulence in a bottle. Tobacco, vanilla & golden amber.', color: '#2a1f1a', stock: 5, image: 'assets/images/products/cologne_bottle_4_1776992821280.png' },
-  { id: 5, name: 'Océane', category: 'women', price: 155, desc: 'Fresh aquatic breeze. Sea salt, bergamot & white cedar.', color: '#1a2233', stock: 20, image: 'assets/images/products/perfume_bottle_5_1776992834657.png' },
-  { id: 6, name: 'Rouge Royal', category: 'women', price: 290, desc: 'Regal and passionate. Saffron, damask rose & oud wood.', color: '#2e1a1a', stock: 4, image: 'assets/images/products/perfume_bottle_6_1776992848285.png' },
-  { id: 7, name: 'Aura Minerals', category: 'unisex', price: 130, desc: 'Clean, zen-like serenity. Green tea, white musk & cedarwood.', color: '#1e2421', stock: 18, image: 'assets/images/products/perfume_bottle_7_1776992863582.png' },
-  { id: 8, name: 'Oud Maliki', category: 'men', price: 320, desc: 'Middle Eastern royalty. Aged oud, frankincense & saffron.', color: '#261e14', stock: 3, image: 'assets/images/products/perfume_bottle_8_1776992879842.png' },
-];
-
-let products = JSON.parse(localStorage.getItem('owlProducts') || JSON.stringify(defaultProducts));
-
-function saveProducts() {
-  localStorage.setItem('owlProducts', JSON.stringify(products));
-  renderAll();
-}
+let products = [];
 
 // ========== DOM ELEMENTS ==========
 const productTableBody = document.getElementById('productTableBody');
@@ -26,6 +19,19 @@ const productForm = document.getElementById('productForm');
 // Stats
 const statTotalProducts = document.getElementById('statTotalProducts');
 const statLowStock = document.getElementById('statLowStock');
+
+// ========== REAL-TIME FIRESTORE DATA ==========
+function initAdmin() {
+  const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+  
+  onSnapshot(q, (snapshot) => {
+    products = snapshot.docs.map(doc => ({
+      docId: doc.id,
+      ...doc.data()
+    }));
+    renderAll();
+  });
+}
 
 // ========== RENDER FUNCTIONS ==========
 function renderAll() {
@@ -39,7 +45,9 @@ function renderProductsTable() {
     <tr>
       <td>
         <div style="display: flex; align-items: center; gap: 10px;">
-          <div style="width: 30px; height: 30px; background: ${p.color}; border-radius: 4px;"></div>
+          <div style="width: 30px; height: 30px; background: ${p.color}; border-radius: 4px; overflow: hidden;">
+            ${p.image ? `<img src="${p.image}" style="width:100%; height:100%; object-fit:cover;">` : ''}
+          </div>
           ${p.name}
         </div>
       </td>
@@ -47,8 +55,8 @@ function renderProductsTable() {
       <td>$${p.price}</td>
       <td>${p.stock}</td>
       <td>
-        <button class="action-btn edit-btn" onclick="editProduct(${p.id})">Edit</button>
-        <button class="action-btn delete-btn" onclick="deleteProduct(${p.id})">Delete</button>
+        <button class="action-btn edit-btn" onclick="editProduct('${p.docId}')">Edit</button>
+        <button class="action-btn delete-btn" onclick="deleteProduct('${p.docId}')">Delete</button>
       </td>
     </tr>
   `).join('');
@@ -63,8 +71,8 @@ function renderInventoryTable() {
         <td><strong>${p.stock}</strong></td>
         <td>${status}</td>
         <td>
-          <button class="action-btn" onclick="updateStock(${p.id}, 1)">+1</button>
-          <button class="action-btn" onclick="updateStock(${p.id}, -1)">-1</button>
+          <button class="action-btn" onclick="updateStock('${p.docId}', 1)">+1</button>
+          <button class="action-btn" onclick="updateStock('${p.docId}', -1)">-1</button>
         </td>
       </tr>
     `;
@@ -77,37 +85,53 @@ function updateStats() {
 }
 
 // ========== CRUD OPERATIONS ==========
-window.editProduct = (id) => {
-  const p = products.find(x => x.id === id);
+window.editProduct = (docId) => {
+  const p = products.find(x => x.docId === docId);
   if (!p) return;
   
-  document.getElementById('editId').value = p.id;
+  document.getElementById('editId').value = p.docId;
   document.getElementById('prodName').value = p.name;
   document.getElementById('prodCategory').value = p.category;
   document.getElementById('prodPrice').value = p.price;
   document.getElementById('prodStock').value = p.stock;
-  document.getElementById('prodImage').value = p.image || '';
   document.getElementById('prodDesc').value = p.desc;
   document.getElementById('prodColor').value = p.color;
+  
+  // Note: Image input is file type, so we can't set value, but we can show preview if needed
   
   document.getElementById('modalTitle').textContent = 'Edit Product';
   productFormModal.classList.add('active');
 };
 
-window.deleteProduct = (id) => {
+window.deleteProduct = async (docId) => {
   if (confirm('Are you sure you want to delete this product?')) {
-    products = products.filter(p => p.id !== id);
-    saveProducts();
+    try {
+      await deleteDoc(doc(db, "products", docId));
+    } catch (e) {
+      alert("Error deleting product: " + e.message);
+    }
   }
 };
 
-window.updateStock = (id, change) => {
-  const p = products.find(x => x.id === id);
+window.updateStock = async (docId, change) => {
+  const p = products.find(x => x.docId === docId);
   if (p) {
-    p.stock = Math.max(0, p.stock + change);
-    saveProducts();
+    try {
+      const newStock = Math.max(0, p.stock + change);
+      await updateDoc(doc(db, "products", docId), { stock: newStock });
+    } catch (e) {
+      console.error("Error updating stock:", e);
+    }
   }
 };
+
+// ========== IMAGE UPLOAD ==========
+async function uploadImage(file) {
+  if (!file) return null;
+  const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
+  const snapshot = await uploadBytes(storageRef, file);
+  return await getDownloadURL(snapshot.ref);
+}
 
 // ========== EVENT LISTENERS ==========
 document.getElementById('addNewBtn').onclick = () => {
@@ -121,29 +145,51 @@ document.getElementById('closeFormBtn').onclick = () => {
   productFormModal.classList.remove('active');
 };
 
-productForm.onsubmit = (e) => {
+productForm.onsubmit = async (e) => {
   e.preventDefault();
-  const id = document.getElementById('editId').value;
-  const newProduct = {
-    id: id ? Number(id) : Date.now(),
-    name: document.getElementById('prodName').value,
-    category: document.getElementById('prodCategory').value,
-    price: Number(document.getElementById('prodPrice').value),
-    stock: Number(document.getElementById('prodStock').value),
-    image: document.getElementById('prodImage').value,
-    desc: document.getElementById('prodDesc').value,
-    color: document.getElementById('prodColor').value || '#1a1a1a'
-  };
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.textContent;
+  submitBtn.textContent = 'Saving...';
+  submitBtn.disabled = true;
 
-  if (id) {
-    const index = products.findIndex(p => p.id === Number(id));
-    products[index] = newProduct;
-  } else {
-    products.push(newProduct);
+  try {
+    const docId = document.getElementById('editId').value;
+    const imageFile = document.getElementById('prodImage').files[0];
+    let imageUrl = null;
+
+    if (imageFile) {
+      imageUrl = await uploadImage(imageFile);
+    } else if (docId) {
+      // Keep existing image if not uploading a new one
+      imageUrl = products.find(p => p.docId === docId)?.image;
+    }
+
+    const productData = {
+      name: document.getElementById('prodName').value,
+      category: document.getElementById('prodCategory').value,
+      price: Number(document.getElementById('prodPrice').value),
+      stock: Number(document.getElementById('prodStock').value),
+      desc: document.getElementById('prodDesc').value,
+      color: document.getElementById('prodColor').value || '#1a1a1a',
+      image: imageUrl,
+      updatedAt: serverTimestamp()
+    };
+
+    if (docId) {
+      await updateDoc(doc(db, "products", docId), productData);
+    } else {
+      productData.createdAt = serverTimestamp();
+      await addDoc(collection(db, "products"), productData);
+    }
+
+    productFormModal.classList.remove('active');
+    productForm.reset();
+  } catch (err) {
+    alert("Error saving product: " + err.message);
+  } finally {
+    submitBtn.textContent = originalBtnText;
+    submitBtn.disabled = false;
   }
-
-  saveProducts();
-  productFormModal.classList.remove('active');
 };
 
 // Tab Switching
@@ -163,4 +209,4 @@ document.getElementById('logoutBtn').onclick = () => {
 };
 
 // Initial Render
-renderAll();
+initAdmin();

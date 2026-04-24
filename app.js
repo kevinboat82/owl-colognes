@@ -1,18 +1,10 @@
+import { db } from './firebase-config.js';
+import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
 // ========== PRODUCT DATA ==========
-const WHATSAPP_NUMBER = '233000000000'; // Replace with real number
+const WHATSAPP_NUMBER = '233504005055'; // Replace with real number
 
-const defaultProducts = [
-  { id: 1, name: 'Midnight Noir', category: 'men', price: 185, desc: 'Dark, bold, and unapologetically masculine. Notes of black pepper, leather & oud.', color: '#1a1a2e', stock: 12, image: 'assets/images/products/cologne_bottle_1_1776992778207.png' },
-  { id: 2, name: 'Rose Éternelle', category: 'women', price: 210, desc: 'A timeless floral symphony. Bulgarian rose, peony & musk.', color: '#2d1f2f', stock: 8, image: 'assets/images/products/perfume_bottle_2_1776992793413.png' },
-  { id: 3, name: 'Arcanum', category: 'unisex', price: 165, desc: 'Mysterious and artisanal. Lavender, sandalwood & amber.', color: '#1f2a1f', stock: 15, image: 'assets/images/products/perfume_bottle_3_1776992806434.png' },
-  { id: 4, name: 'Élégance Noir', category: 'men', price: 240, desc: 'Art Deco opulence in a bottle. Tobacco, vanilla & golden amber.', color: '#2a1f1a', stock: 5, image: 'assets/images/products/cologne_bottle_4_1776992821280.png' },
-  { id: 5, name: 'Océane', category: 'women', price: 155, desc: 'Fresh aquatic breeze. Sea salt, bergamot & white cedar.', color: '#1a2233', stock: 20, image: 'assets/images/products/perfume_bottle_5_1776992834657.png' },
-  { id: 6, name: 'Rouge Royal', category: 'women', price: 290, desc: 'Regal and passionate. Saffron, damask rose & oud wood.', color: '#2e1a1a', stock: 4, image: 'assets/images/products/perfume_bottle_6_1776992848285.png' },
-  { id: 7, name: 'Aura Minerals', category: 'unisex', price: 130, desc: 'Clean, zen-like serenity. Green tea, white musk & cedarwood.', color: '#1e2421', stock: 18, image: 'assets/images/products/perfume_bottle_7_1776992863582.png' },
-  { id: 8, name: 'Oud Maliki', category: 'men', price: 320, desc: 'Middle Eastern royalty. Aged oud, frankincense & saffron.', color: '#261e14', stock: 3, image: 'assets/images/products/perfume_bottle_8_1776992879842.png' },
-];
-
-let products = JSON.parse(localStorage.getItem('owlProducts') || JSON.stringify(defaultProducts));
+let products = [];
 
 // ========== STATE ==========
 let wishlist = JSON.parse(localStorage.getItem('owlWishlist') || '[]');
@@ -24,6 +16,27 @@ const wishlistItems = document.getElementById('wishlistItems');
 const wishlistCount = document.getElementById('wishlistCount');
 const wishlistEmpty = document.getElementById('wishlistEmpty');
 const overlay = document.getElementById('overlay');
+
+// ========== REAL-TIME FIRESTORE DATA ==========
+function initStorefront() {
+  const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+
+  onSnapshot(q, (snapshot) => {
+    products = snapshot.docs.map(doc => ({
+      docId: doc.id,
+      ...doc.data()
+    }));
+
+    // Maintain backward compatibility with numeric IDs if they exist in data
+    products = products.map(p => ({
+      ...p,
+      id: p.id || p.docId
+    }));
+
+    renderProducts(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
+    updateWishlistUI();
+  });
+}
 
 // ========== RENDER PRODUCTS ==========
 function renderProducts(filter = 'all') {
@@ -69,10 +82,10 @@ function updateWishlistUI() {
 
   wishlistEmpty.style.display = 'none';
   const items = wishlist.map(id => products.find(p => p.id === id)).filter(Boolean);
-  
+
   // Clear existing items
   wishlistItems.querySelectorAll('.wishlist-item').forEach(el => el.remove());
-  
+
   items.forEach(item => {
     const div = document.createElement('div');
     div.className = 'wishlist-item';
@@ -112,21 +125,21 @@ function openProductModal(id) {
   document.getElementById('modalCategory').textContent = product.category;
   document.getElementById('modalPrice').textContent = `$${product.price}`;
   document.getElementById('modalDescription').textContent = product.desc;
-  
+
   const modalImgContainer = document.getElementById('modalImage');
   modalImgContainer.style.background = `linear-gradient(145deg, ${product.color}, #0a0a0a)`;
   modalImgContainer.style.boxShadow = `0 0 50px ${product.color}44`;
-  
+
   if (product.image) {
     modalImgContainer.innerHTML = `<img src="${product.image}" alt="${product.name}" class="product-actual-img" style="max-height: 300px;">`;
   } else {
     modalImgContainer.innerHTML = `<div class="product-img-placeholder" style="box-shadow: 0 0 30px ${product.color}88;"></div>`;
   }
-  
+
   const modalWishBtn = document.getElementById('modalWishlistBtn');
   modalWishBtn.textContent = wishlist.includes(product.id) ? '♥' : '♡';
   modalWishBtn.onclick = () => toggleWishlist(product.id);
-  
+
   document.getElementById('modalOrderBtn').onclick = () => {
     const msg = `Hi Owl Colognes! I'd like to order *${product.name}* ($${product.price}). Please let me know the next steps.`;
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -158,7 +171,7 @@ productsGrid.addEventListener('click', (e) => {
     }
     return;
   }
-  
+
   // Open modal on card click (if not clicking buttons)
   const card = e.target.closest('.product-card');
   if (card) {
@@ -278,5 +291,4 @@ function animateParticles() {
 animateParticles();
 
 // ========== INIT ==========
-renderProducts();
-updateWishlistUI();
+initStorefront();
