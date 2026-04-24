@@ -1,89 +1,282 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Owl Colognes – Discover luxury fragrances curated for the bold and refined. Order premium perfumes and request exclusive scents via WhatsApp. Based in Ghana.">
+  <meta name="keywords" content="owl colognes, luxury perfumes, fragrances ghana, cologne accra, designer perfume, oud, unisex fragrance">
+  <meta name="author" content="Owl Colognes">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="msapplication-TileColor" content="#0a0a0a">
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/12.12.1/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.12.1/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/12.12.1/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/12.12.1/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/12.12.1/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/12.12.1/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/12.12.1/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/12.12.1/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/12.12.1/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/12.12.1/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="owl.png">
+  <link rel="apple-touch-icon" href="owl.png">
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://owl-cologne.com/">
+  <meta property="og:title" content="Owl Colognes | Luxury Fragrances">
+  <meta property="og:description" content="Curated luxury fragrances for the bold and refined. Order premium perfumes via WhatsApp. Based in Ghana.">
+  <meta property="og:image" content="https://owl-cologne.com/owl.png">
+  <meta property="og:site_name" content="Owl Colognes">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Owl Colognes | Luxury Fragrances">
+  <meta name="twitter:description" content="Curated luxury fragrances for the bold and refined. Order premium perfumes via WhatsApp.">
+  <meta name="twitter:image" content="https://owl-cologne.com/owl.png">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://owl-cologne.com/">
+
+  <title>Owl Colognes | Luxury Fragrances</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- Navigation -->
+  <nav id="mainNav">
+    <div class="nav-container" style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+      <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 15px;">
+        <img src="owl.png" alt="Owl Logo" style="height: 45px; width: auto; filter: drop-shadow(0 0 10px rgba(212,175,55,0.3));">
+        Owl <span>Colognes</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#collection">Collection</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#request">Request</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="wishlist-btn" id="openWishlist" aria-label="Open wishlist">
+          ♡
+          <span class="wishlist-count" id="wishlistCount" style="display:none;">0</span>
+        </button>
+      </div>
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
+  </nav>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+  <!-- Wishlist Sidebar -->
+  <div class="wishlist-sidebar" id="wishlistSidebar">
+    <div class="wishlist-header">
+      <h2>My Wishlist</h2>
+      <button class="close-wishlist" id="closeWishlist">✕</button>
+    </div>
+    <div class="wishlist-items" id="wishlistItems">
+      <p class="wishlist-empty" id="wishlistEmpty">Your wishlist is empty.<br>Add fragrances you'd love us to stock.</p>
+    </div>
+    <div class="wishlist-footer">
+      <a href="#" class="btn-primary hero-btn-override" id="sendWishlistWA">
+        📱 Send Wishlist via WhatsApp
+      </a>
+    </div>
+  </div>
+  <div class="overlay" id="overlay"></div>
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
-        }
-      });
-    </script>
-  </body>
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <canvas id="heroParticles"></canvas>
+    <p class="hero-eyebrow">Luxury Fragrances · Handpicked for You</p>
+    <h1>Scent of<br>Distinction</h1>
+    <p>Curated luxury fragrances for the bold and refined. Each bottle tells a story of elegance, crafted for those who dare to leave an impression.</p>
+    <a href="#collection" class="btn-primary">Explore Collection</a>
+  </section>
+
+  <!-- Why Owl Colognes -->
+  <section class="features-section" id="features">
+    <h2 class="section-title reveal">Why Owl <span style="color: var(--accent-gold);">Colognes</span></h2>
+    <div class="features-grid">
+      <div class="feature-card glass-panel reveal">
+        <div class="feature-icon">✦</div>
+        <h3>100% Authentic</h3>
+        <p>Every bottle is sourced directly from certified distributors. No imitations, no compromises — only the real thing.</p>
+      </div>
+      <div class="feature-card glass-panel reveal">
+        <div class="feature-icon">🌍</div>
+        <h3>Globally Sourced</h3>
+        <p>From Parisian ateliers to Arabian oud houses, we scour the world to bring you rare and timeless scents.</p>
+      </div>
+      <div class="feature-card glass-panel reveal">
+        <div class="feature-icon">🚀</div>
+        <h3>Swift Delivery</h3>
+        <p>Order via WhatsApp and receive your fragrance within Accra in 24 hours, or nationwide within 3–5 days.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about-section" id="about">
+    <div class="about-container glass-panel reveal">
+      <div class="about-icon">🦉</div>
+      <h2>The Owl's Promise</h2>
+      <p>At Owl Colognes, we believe every scent is a signature. We source the world's finest fragrances — from the oud-rich bazaars of the Middle East to the lavender fields of Provence — so you don't have to. Can't find what you're looking for? Tell us, and we'll hunt it down.</p>
+    </div>
+  </section>
+
+  <!-- Collection Section -->
+  <section class="products" id="collection">
+    <h2 class="section-title reveal">The Collection</h2>
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="men">Men</button>
+      <button class="filter-btn" data-filter="women">Women</button>
+      <button class="filter-btn" data-filter="unisex">Unisex</button>
+    </div>
+    <div class="products-grid" id="productsGrid">
+      <!-- Products rendered by JS -->
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-section" id="howItWorks">
+    <h2 class="section-title reveal">How It <span style="color: var(--accent-gold);">Works</span></h2>
+    <div class="how-grid">
+      <div class="how-step reveal">
+        <div class="step-number">01</div>
+        <h3>Browse</h3>
+        <p>Explore our curated collection or request a specific fragrance you've been dreaming of.</p>
+      </div>
+      <div class="how-connector reveal">→</div>
+      <div class="how-step reveal">
+        <div class="step-number">02</div>
+        <h3>Order via WhatsApp</h3>
+        <p>Tap "Order Now" and you'll be connected directly with us on WhatsApp to confirm your purchase.</p>
+      </div>
+      <div class="how-connector reveal">→</div>
+      <div class="how-step reveal">
+        <div class="step-number">03</div>
+        <h3>Delivered to You</h3>
+        <p>We package your fragrance with care and deliver it right to your doorstep across Ghana.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials-section" id="testimonials">
+    <h2 class="section-title reveal">What Our <span style="color: var(--accent-gold);">Clients</span> Say</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card glass-panel reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"The Oud Maliki is absolutely divine. I've never received so many compliments on a fragrance before. Owl Colognes is my go-to."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">K</div>
+          <div>
+            <strong>Kwame A.</strong>
+            <span>Accra, Ghana</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card glass-panel reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Fast delivery and the packaging was beautiful. The Velvet Rose smells even better than I imagined. Will definitely order again!"</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">A</div>
+          <div>
+            <strong>Ama D.</strong>
+            <span>Kumasi, Ghana</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card glass-panel reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"I requested a niche fragrance and they sourced it within a week. The WhatsApp ordering is so convenient. Top-notch service."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">E</div>
+          <div>
+            <strong>Edem K.</strong>
+            <span>Takoradi, Ghana</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Request Section -->
+  <section class="request-section" id="request">
+    <div class="request-container glass-panel reveal">
+      <h2>Can't Find Your Scent?</h2>
+      <p>Tell us which fragrance you desire, and we'll source it for you. Add it to your wishlist and we'll get back to you on availability and pricing.</p>
+      <form class="request-form" id="requestForm">
+        <div class="form-group">
+          <input type="text" class="form-control" id="reqName" placeholder="Your Name" required>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" id="reqPerfume" placeholder="Perfume Name / Brand" required>
+        </div>
+        <div class="form-group">
+          <textarea class="form-control" id="reqDetails" placeholder="Any details? (size, concentration, etc.)"></textarea>
+        </div>
+        <button type="submit" class="btn-primary hero-btn-override">
+          Send Request via WhatsApp
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-banner reveal">
+    <div class="cta-content">
+      <h2>Ready to Find Your Signature Scent?</h2>
+      <p>Chat with us on WhatsApp and let our fragrance experts guide you to the perfect bottle.</p>
+      <a href="https://wa.me/233504005055?text=Hi%20Owl%20Colognes!%20I%27d%20like%20to%20explore%20your%20fragrances." class="btn-primary hero-btn-override" target="_blank" rel="noopener">
+        💬 Chat With Us Now
+      </a>
+    </div>
+  </section>
+
+  <!-- Product Detail Modal -->
+  <div class="product-modal" id="productModal">
+    <div class="modal-content glass-panel">
+      <button class="close-modal" id="closeModal">✕</button>
+      <div class="modal-body">
+        <div class="modal-image-container" id="modalImage">
+          <div class="product-img-placeholder"></div>
+        </div>
+        <div class="modal-info">
+          <h2 id="modalTitle">Product Name</h2>
+          <p class="modal-category" id="modalCategory">Category</p>
+          <p class="modal-price" id="modalPrice">GH₵0.00</p>
+          <p class="modal-description" id="modalDescription">Full description goes here.</p>
+          <div class="modal-actions">
+            <button class="btn-primary hero-btn-override" id="modalOrderBtn">Order Now via WhatsApp</button>
+            <button class="btn-icon" id="modalWishlistBtn">♡</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">Owl <span>Colognes</span></div>
+    <div class="footer-links">
+      <a href="#hero">Home</a>
+      <a href="#collection">Collection</a>
+      <a href="#about">Our Story</a>
+      <a href="#request">Request</a>
+    </div>
+    <div class="footer-social">
+      <a href="https://wa.me/233504005055" target="_blank" rel="noopener" aria-label="WhatsApp" class="social-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.116.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.116-.198-.012-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.2-.33.065-.134.032-.248-.016-.348-.05-.099-.445-1.076-.612-1.47-.16-.389-.325-.335-.445-.34-.116-.007-.248-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.13 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+        </svg>
+      </a>
+    </div>
+    <p class="footer-text">© 2026 Owl Colognes. All rights reserved. Luxury, delivered.</p>
+  </footer>
+
+  <!-- WhatsApp FAB -->
+  <a href="https://wa.me/233504005055?text=Hi%20Owl%20Colognes!%20I%27d%20like%20to%20enquire%20about%20your%20fragrances." class="whatsapp-float" id="whatsappFloat" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.116.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.116-.198-.012-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.2-.33.065-.134.032-.248-.016-.348-.05-.099-.445-1.076-.612-1.47-.16-.389-.325-.335-.445-.34-.116-.007-.248-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.13 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+    </svg>
+  </a>
+
+  <script type="module" src="app.js"></script>
+</body>
 </html>
