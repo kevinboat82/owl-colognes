@@ -164,6 +164,7 @@
     <div class="admin-tabs">
       <button class="tab-btn active" data-tab="products">Products</button>
       <button class="tab-btn" data-tab="inventory">Inventory</button>
+      <button class="tab-btn" data-tab="discounts">Discounts</button>
       <button class="tab-btn" data-tab="orders">Orders</button>
     </div>
 
@@ -193,6 +194,35 @@
           </tr>
         </thead>
         <tbody id="inventoryTableBody"></tbody>
+      </table>
+    </div>
+
+    <div id="discountsSection" class="admin-section">
+      <div class="glass-panel" style="padding: 30px; margin-bottom: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2 style="color: var(--accent-gold);">Global Sale</h2>
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+            <input type="checkbox" id="globalSaleToggle" style="width: 20px; height: 20px; cursor: pointer;">
+            <span>Enable Sale Banner</span>
+          </label>
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>Sale Banner Text</label>
+          <input type="text" id="saleBannerText" placeholder="e.g. Summer Sale — Up to 30% Off!">
+        </div>
+        <button class="btn-primary hero-btn-override" id="saveSaleSettings" style="padding: 10px 25px; font-size: 0.85rem;">Save Sale Settings</button>
+      </div>
+      <table class="data-table glass-panel">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Original Price</th>
+            <th>Discount %</th>
+            <th>Final Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="discountTableBody"></tbody>
       </table>
     </div>
 

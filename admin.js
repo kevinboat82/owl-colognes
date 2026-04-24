@@ -1,7 +1,7 @@
 import { db, storage } from './firebase-config.js';
 import { 
   collection, onSnapshot, query, orderBy, 
-  addDoc, updateDoc, deleteDoc, doc, serverTimestamp 
+  addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc, serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { 
   ref, uploadBytes, getDownloadURL 
@@ -18,6 +18,7 @@ let products = [];
 // ========== DOM ELEMENTS ==========
 const productTableBody = document.getElementById('productTableBody');
 const inventoryTableBody = document.getElementById('inventoryTableBody');
+const discountTableBody = document.getElementById('discountTableBody');
 const productFormModal = document.getElementById('productFormModal');
 const productForm = document.getElementById('productForm');
 
@@ -42,6 +43,7 @@ function initAdmin() {
 function renderAll() {
   renderProductsTable();
   renderInventoryTable();
+  renderDiscountsTable();
   updateStats();
 }
 
@@ -87,6 +89,31 @@ function renderInventoryTable() {
 function updateStats() {
   statTotalProducts.textContent = products.length;
   statLowStock.textContent = products.filter(p => p.stock <= 5).length;
+}
+
+function renderDiscountsTable() {
+  discountTableBody.innerHTML = products.map(p => {
+    const discount = p.discount || 0;
+    const final = discount > 0 ? (p.price * (1 - discount / 100)).toFixed(2) : p.price;
+    return `
+      <tr>
+        <td>${p.name}</td>
+        <td>GH₵${p.price}</td>
+        <td>
+          <input type="number" min="0" max="99" value="${discount}" 
+            style="width: 70px; padding: 6px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; border-radius: 4px; text-align: center;"
+            id="disc_${p.docId}">
+        </td>
+        <td style="color: ${discount > 0 ? '#4dff4d' : 'inherit'};">
+          GH₵${final} ${discount > 0 ? `<span style="color: #ff4d4d; text-decoration: line-through; font-size: 0.8rem; margin-left: 5px;">GH₵${p.price}</span>` : ''}
+        </td>
+        <td>
+          <button class="action-btn edit-btn" onclick="saveDiscount('${p.docId}')">Save</button>
+          ${discount > 0 ? `<button class="action-btn delete-btn" onclick="clearDiscount('${p.docId}')">Clear</button>` : ''}
+        </td>
+      </tr>
+    `;
+  }).join('');
 }
 
 // ========== CRUD OPERATIONS ==========
@@ -195,6 +222,60 @@ productForm.onsubmit = async (e) => {
   }
 };
 
+// ========== DISCOUNT OPERATIONS ==========
+window.saveDiscount = async (docId) => {
+  const input = document.getElementById(`disc_${docId}`);
+  const discount = Math.min(99, Math.max(0, Number(input.value)));
+  try {
+    await updateDoc(doc(db, "products", docId), { discount });
+    input.style.borderColor = '#4dff4d';
+    setTimeout(() => { input.style.borderColor = ''; }, 1500);
+  } catch (e) {
+    alert("Error saving discount: " + e.message);
+  }
+};
+
+window.clearDiscount = async (docId) => {
+  try {
+    await updateDoc(doc(db, "products", docId), { discount: 0 });
+  } catch (e) {
+    alert("Error clearing discount: " + e.message);
+  }
+};
+
+// ========== SALE SETTINGS ==========
+const saleSettingsRef = doc(db, "settings", "sale");
+
+async function loadSaleSettings() {
+  try {
+    const snap = await getDoc(saleSettingsRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      document.getElementById('globalSaleToggle').checked = data.enabled || false;
+      document.getElementById('saleBannerText').value = data.bannerText || '';
+    }
+  } catch (e) {
+    console.error("Error loading sale settings:", e);
+  }
+}
+
+document.getElementById('saveSaleSettings').onclick = async () => {
+  const btn = document.getElementById('saveSaleSettings');
+  btn.textContent = 'Saving...';
+  try {
+    await setDoc(saleSettingsRef, {
+      enabled: document.getElementById('globalSaleToggle').checked,
+      bannerText: document.getElementById('saleBannerText').value,
+      updatedAt: serverTimestamp()
+    });
+    btn.textContent = '✓ Saved!';
+    setTimeout(() => { btn.textContent = 'Save Sale Settings'; }, 2000);
+  } catch (e) {
+    alert("Error saving sale settings: " + e.message);
+    btn.textContent = 'Save Sale Settings';
+  }
+};
+
 // Tab Switching
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.onclick = () => {
@@ -214,3 +295,5 @@ document.getElementById('logoutBtn').onclick = () => {
 
 // Initial Render
 initAdmin();
+loadSaleSettings();
+

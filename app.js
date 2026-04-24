@@ -1,5 +1,5 @@
 import { db } from './firebase-config.js';
-import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { collection, onSnapshot, query, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // ========== CONFIG ==========
 const WHATSAPP_NUMBER = '233504005055';
@@ -36,7 +36,13 @@ function initStorefront() {
 // ========== RENDER PRODUCTS ==========
 function renderProducts(filter = 'all') {
   const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
-  productsGrid.innerHTML = filtered.map((p, i) => `
+  productsGrid.innerHTML = filtered.map((p, i) => {
+    const discount = p.discount || 0;
+    const finalPrice = discount > 0 ? (p.price * (1 - discount / 100)).toFixed(2) : p.price;
+    const priceHTML = discount > 0 
+      ? `<span class="product-price-final">GH₵${finalPrice}</span> <span class="product-price-original">GH₵${p.price}</span> <span class="product-discount-badge">-${discount}%</span>`
+      : `GH₵${p.price}`;
+    return `
     <div class="product-card glass-panel" data-id="${p.docId}" style="animation: fadeUp 0.6s ease forwards ${i * 0.1}s; opacity:0; --card-glow: ${p.color}44;">
       <div class="product-image-container" style="background: linear-gradient(145deg, ${p.color}, #0a0a0a);">
         ${p.image ? `
@@ -45,18 +51,19 @@ function renderProducts(filter = 'all') {
         ` : `
           <div class="product-img-placeholder" style="box-shadow: 0 0 30px ${p.color}88;"></div>
         `}
+        ${discount > 0 ? `<div class="card-discount-tag">-${discount}%</div>` : ''}
       </div>
       <h3 class="product-title">${p.name}</h3>
       <p class="product-desc">${p.desc}</p>
-      <p class="product-price">GH₵${p.price}</p>
+      <p class="product-price">${priceHTML}</p>
       <div class="product-actions">
-        <button class="btn-secondary order-btn" data-id="${p.docId}">Order Now</button>
+        <button class="btn-secondary order-btn" data-id="${p.docId}" data-price="${finalPrice}">Order Now</button>
         <button class="btn-icon wishlist-toggle ${wishlist.includes(p.docId) ? 'active' : ''}" data-id="${p.docId}" aria-label="Add to wishlist">
           ${wishlist.includes(p.docId) ? '♥' : '♡'}
         </button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 // ========== WISHLIST ==========
@@ -161,7 +168,8 @@ productsGrid.addEventListener('click', (e) => {
   if (orderBtn) {
     const product = products.find(p => p.docId === orderBtn.dataset.id);
     if (product) {
-      const msg = `Hi Owl Colognes! I'd like to order *${product.name}* (GH₵${product.price}). Please let me know the next steps.`;
+      const price = orderBtn.dataset.price || product.price;
+      const msg = `Hi Owl Colognes! I'd like to order *${product.name}* (GH₵${price}). Please let me know the next steps.`;
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
     }
     return;
@@ -338,5 +346,28 @@ function promptAdminLogin() {
   }
 }
 
+// ========== SALE BANNER ==========
+async function loadSaleBanner() {
+  try {
+    const snap = await getDoc(doc(db, "settings", "sale"));
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data.enabled && data.bannerText) {
+        const banner = document.createElement('div');
+        banner.className = 'sale-banner';
+        banner.innerHTML = `
+          <span>${data.bannerText}</span>
+          <button onclick="this.parentElement.remove()" aria-label="Close">&times;</button>
+        `;
+        document.body.prepend(banner);
+      }
+    }
+  } catch (e) {
+    console.log("No sale settings found");
+  }
+}
+
 // ========== INIT ==========
 initStorefront();
+loadSaleBanner();
+
