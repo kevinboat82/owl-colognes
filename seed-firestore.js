@@ -12,23 +12,43 @@ const defaultProducts = [
   { id: 8, name: 'Oud Maliki', category: 'men', price: 320, desc: 'Middle Eastern royalty. Aged oud, frankincense & saffron.', color: '#261e14', stock: 3, image: 'assets/images/products/perfume_bottle_8_1776992879842.png' },
 ];
 
-async function seedProducts() {
+async function seedFirestore() {
   console.log("Starting migration to Firestore...");
-  const querySnapshot = await getDocs(collection(db, "products"));
   
-  if (querySnapshot.empty) {
-    console.log("Firestore collection is empty. Seeding default products...");
-    for (const product of defaultProducts) {
-      await addDoc(collection(db, "products"), {
-        ...product,
-        createdAt: new Date()
-      });
-      console.log(`Added: ${product.name}`);
+  // 1. Seed Products
+  const prodSnapshot = await getDocs(collection(db, "products"));
+  if (prodSnapshot.empty) {
+    console.log("Seeding products...");
+    for (const p of defaultProducts) {
+      await addDoc(collection(db, "products"), { ...p, createdAt: new Date() });
     }
-    console.log("Seeding complete!");
-  } else {
-    console.log("Firestore already has products. Skipping seed.");
   }
+
+  // 2. Seed Settings
+  const setSnapshot = await getDocs(collection(db, "settings"));
+  if (setSnapshot.empty) {
+    console.log("Seeding settings...");
+    await addDoc(collection(db, "settings"), {
+      globalDiscount: 15,
+      discountEnabled: false,
+      discountMessage: "SPECIAL OFFER: 15% OFF ALL LUXURY SCENTS"
+    });
+  }
+
+  // 3. Seed Hero Slides
+  const heroSnapshot = await getDocs(collection(db, "hero_slides"));
+  if (heroSnapshot.empty) {
+    console.log("Seeding hero slides...");
+    const slides = [
+      { image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80', order: 1 },
+      { image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80', order: 2 },
+      { image: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80', order: 3 }
+    ];
+    for (const s of slides) {
+      await addDoc(collection(db, "hero_slides"), s);
+    }
+  }
+  console.log("Migration complete!");
 }
 
-seedProducts();
+seedFirestore();

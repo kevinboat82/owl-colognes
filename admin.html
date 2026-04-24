@@ -164,6 +164,8 @@
     <div class="admin-tabs">
       <button class="tab-btn active" data-tab="products">Products</button>
       <button class="tab-btn" data-tab="inventory">Inventory</button>
+      <button class="tab-btn" data-tab="settings">Store Settings</button>
+      <button class="tab-btn" data-tab="hero">Hero Slides</button>
       <button class="tab-btn" data-tab="orders">Orders</button>
     </div>
 
@@ -173,13 +175,46 @@
           <tr>
             <th>Product</th>
             <th>Category</th>
-            <th>Price</th>
+            <th>Price (GH₵)</th>
             <th>Stock</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody id="productTableBody"></tbody>
       </table>
+    </div>
+
+    <div id="settingsSection" class="admin-section">
+      <div class="glass-panel" style="padding: 40px; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: var(--accent-gold); margin-bottom: 30px;">Global Discount Management</h2>
+        <form id="settingsForm">
+          <div class="form-group">
+            <label>Enable Discount (%)</label>
+            <div style="display: flex; gap: 15px; align-items: center;">
+              <input type="number" id="globalDiscount" placeholder="e.g. 15" style="flex: 1;">
+              <div class="toggle-switch">
+                <input type="checkbox" id="discountEnabled" style="width: auto;">
+                <label for="discountEnabled" style="display: inline; margin: 0;">Active</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Banner Message</label>
+            <input type="text" id="discountMessage" placeholder="FLASH SALE: 15% OFF ALL LUXURY SCENTS">
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; margin-top: 20px;">Save Settings</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="heroSection" class="admin-section">
+      <div class="admin-header">
+        <h2>Hero Slideshow</h2>
+        <button class="btn-primary" id="addHeroSlideBtn">+ Add Slide</button>
+      </div>
+      <div id="heroSlidesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+        <!-- Slides will be loaded here -->
+      </div>
     </div>
 
     <div id="inventorySection" class="admin-section">
@@ -224,7 +259,7 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Price ($)</label>
+          <label>Price (GH₵)</label>
           <input type="number" id="prodPrice" required>
         </div>
         <div class="form-group">
@@ -251,6 +286,25 @@
     </div>
   </div>
 
-  <script type="module" src="admin.js"></script>
+  <!-- Hero Slide Modal -->
+  <div class="modal-admin" id="heroSlideModal">
+    <div class="modal-admin-content glass-panel">
+      <h2>Add Hero Slide</h2>
+      <form id="heroSlideForm" style="margin-top: 20px;">
+        <div class="form-group">
+          <label>Slide Image</label>
+          <input type="file" id="heroSlideImage" accept="image/*" required>
+        </div>
+        <div class="form-group">
+          <label>Order (Display Sequence)</label>
+          <input type="number" id="heroSlideOrder" value="0">
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 30px;">
+          <button type="submit" class="btn-primary" style="flex: 1;">Upload Slide</button>
+          <button type="button" class="btn-secondary" id="closeHeroModalBtn" style="flex: 1;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
 </html>

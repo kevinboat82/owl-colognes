@@ -8,7 +8,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
 // ========== DATA MANAGEMENT ==========
+if (sessionStorage.getItem('owlAdminAuth') !== 'true') {
+  window.location.href = 'index.html';
+}
+
 let products = [];
+let settings = { globalDiscount: 0, discountEnabled: false, discountMessage: "" };
+let heroSlides = [];
 
 // ========== DOM ELEMENTS ==========
 const productTableBody = document.getElementById('productTableBody');
@@ -22,14 +28,27 @@ const statLowStock = document.getElementById('statLowStock');
 
 // ========== REAL-TIME FIRESTORE DATA ==========
 function initAdmin() {
-  const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-  
-  onSnapshot(q, (snapshot) => {
-    products = snapshot.docs.map(doc => ({
-      docId: doc.id,
-      ...doc.data()
-    }));
-    renderAll();
+  // Products
+  onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snapshot) => {
+    products = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+    renderProductsTable();
+    renderInventoryTable();
+    updateStats();
+  });
+
+  // Settings
+  onSnapshot(collection(db, "settings"), (snapshot) => {
+    if (!snapshot.empty) {
+      settings = snapshot.docs[0].data();
+      settings.docId = snapshot.docs[0].id;
+      renderSettings();
+    }
+  });
+
+  // Hero Slides
+  onSnapshot(query(collection(db, "hero_slides"), orderBy("order", "asc")), (snapshot) => {
+    heroSlides = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+    renderHeroSlides();
   });
 }
 
@@ -52,7 +71,7 @@ function renderProductsTable() {
         </div>
       </td>
       <td><span style="text-transform: capitalize;">${p.category}</span></td>
-      <td>$${p.price}</td>
+      <td>GH₵${p.price}</td>
       <td>${p.stock}</td>
       <td>
         <button class="action-btn edit-btn" onclick="editProduct('${p.docId}')">Edit</button>
@@ -82,6 +101,25 @@ function renderInventoryTable() {
 function updateStats() {
   statTotalProducts.textContent = products.length;
   statLowStock.textContent = products.filter(p => p.stock <= 5).length;
+}
+
+function renderSettings() {
+  document.getElementById('globalDiscount').value = settings.globalDiscount;
+  document.getElementById('discountEnabled').checked = settings.discountEnabled;
+  document.getElementById('discountMessage').value = settings.discountMessage;
+}
+
+function renderHeroSlides() {
+  const grid = document.getElementById('heroSlidesGrid');
+  grid.innerHTML = heroSlides.map(slide => `
+    <div class="glass-panel" style="padding: 15px; position: relative;">
+      <img src="${slide.image}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Order: ${slide.order}</span>
+        <button class="action-btn delete-btn" onclick="deleteHeroSlide('${slide.docId}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
 }
 
 // ========== CRUD OPERATIONS ==========
@@ -121,6 +159,16 @@ window.updateStock = async (docId, change) => {
       await updateDoc(doc(db, "products", docId), { stock: newStock });
     } catch (e) {
       console.error("Error updating stock:", e);
+    }
+  }
+};
+
+window.deleteHeroSlide = async (docId) => {
+  if (confirm('Delete this hero slide?')) {
+    try {
+      await deleteDoc(doc(db, "hero_slides", docId));
+    } catch (e) {
+      alert("Error: " + e.message);
     }
   }
 };
@@ -205,8 +253,72 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // Logout (Back to store)
 document.getElementById('logoutBtn').onclick = () => {
+  sessionStorage.removeItem('owlAdminAuth');
   window.location.href = 'index.html';
 };
+
+// Settings Form
+document.getElementById('settingsForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const data = {
+    globalDiscount: Number(document.getElementById('globalDiscount').value),
+    discountEnabled: document.getElementById('discountEnabled').checked,
+    discountMessage: document.getElementById('discountMessage').value,
+    updatedAt: serverTimestamp()
+  };
+
+  try {
+    if (settings.docId) {
+      await updateDoc(doc(db, "settings", settings.docId), data);
+    } else {
+      await addDoc(collection(db, "settings"), data);
+    }
+    alert("Settings saved!");
+  } catch (err) {
+    alert("Error: " + err.message);
+  }
+};
+
+// Hero Slide Management
+document.getElementById('addHeroSlideBtn').onclick = () => {
+  document.getElementById('heroSlideModal').classList.add('active');
+};
+
+document.getElementById('closeHeroModalBtn').onclick = () => {
+  document.getElementById('heroSlideModal').classList.remove('active');
+};
+
+document.getElementById('heroSlideForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const file = document.getElementById('heroSlideImage').files[0];
+  const order = Number(document.getElementById('heroSlideOrder').value);
+  const btn = e.target.querySelector('button[type="submit"]');
+  
+  if (!file) return;
+  btn.textContent = "Uploading...";
+  btn.disabled = true;
+
+  try {
+    const imageUrl = await uploadImage(file);
+    await addDoc(collection(db, "hero_slides"), {
+      image: imageUrl,
+      order: order,
+      createdAt: serverTimestamp()
+    });
+    document.getElementById('heroSlideModal').classList.remove('active');
+    e.target.reset();
+  } catch (err) {
+    alert("Error: " + err.message);
+  } finally {
+    btn.textContent = "Upload Slide";
+    btn.disabled = false;
+  }
+};
+
+  document.getElementById('modalOrderBtn').onclick = () => {
+    const msg = `Hi Owl Colognes! I'd like to order *${product.name}* (GH₵${product.price}). Please let me know the next steps.`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+  };
 
 // Initial Render
 initAdmin();

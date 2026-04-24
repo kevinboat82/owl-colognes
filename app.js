@@ -8,6 +8,8 @@ let products = [];
 
 // ========== STATE ==========
 let wishlist = JSON.parse(localStorage.getItem('owlWishlist') || '[]');
+let settings = { globalDiscount: 0, discountEnabled: false, discountMessage: "" };
+let heroSlides = [];
 
 // ========== DOM ==========
 const productsGrid = document.getElementById('productsGrid');
@@ -19,49 +21,94 @@ const overlay = document.getElementById('overlay');
 
 // ========== REAL-TIME FIRESTORE DATA ==========
 function initStorefront() {
-  const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-
-  onSnapshot(q, (snapshot) => {
-    products = snapshot.docs.map(doc => ({
-      docId: doc.id,
-      ...doc.data()
-    }));
-
-    // Maintain backward compatibility with numeric IDs if they exist in data
-    products = products.map(p => ({
-      ...p,
-      id: p.id || p.docId
-    }));
-
+  // Products
+  const qProducts = query(collection(db, "products"), orderBy("createdAt", "desc"));
+  onSnapshot(qProducts, (snapshot) => {
+    products = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+    products = products.map(p => ({ ...p, id: p.id || p.docId }));
     renderProducts(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
     updateWishlistUI();
   });
+
+  // Settings (Discounts)
+  onSnapshot(collection(db, "settings"), (snapshot) => {
+    if (!snapshot.empty) {
+      settings = snapshot.docs[0].data();
+      applySettings();
+    }
+  });
+
+  // Hero Slides
+  const qHero = query(collection(db, "hero_slides"), orderBy("order", "asc"));
+  onSnapshot(qHero, (snapshot) => {
+    heroSlides = snapshot.docs.map(doc => doc.data());
+    initHeroSlideshow();
+  });
+}
+
+function applySettings() {
+  const banner = document.getElementById('discountBanner');
+  const bannerMsg = document.getElementById('discountMsg');
+  
+  if (settings.discountEnabled) {
+    banner.classList.add('active');
+    bannerMsg.textContent = settings.discountMessage;
+  } else {
+    banner.classList.remove('active');
+  }
+  renderProducts(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
+}
+
+function initHeroSlideshow() {
+  const container = document.getElementById('heroSlideshow');
+  if (!heroSlides.length) return;
+  
+  container.innerHTML = heroSlides.map((slide, i) => `
+    <div class="hero-slide ${i === 0 ? 'active' : ''}" style="background-image: url('${slide.image}')"></div>
+  `).join('');
+
+  let current = 0;
+  setInterval(() => {
+    const slides = document.querySelectorAll('.hero-slide');
+    if (!slides.length) return;
+    slides[current].classList.remove('active');
+    current = (current + 1) % slides.length;
+    slides[current].classList.add('active');
+  }, 6000);
 }
 
 // ========== RENDER PRODUCTS ==========
 function renderProducts(filter = 'all') {
   const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
-  productsGrid.innerHTML = filtered.map((p, i) => `
-    <div class="product-card glass-panel" data-id="${p.id}" style="animation: fadeUp 0.6s ease forwards ${i * 0.1}s; opacity:0; --card-glow: ${p.color}44;">
-      <div class="product-image-container" style="background: linear-gradient(145deg, ${p.color}, #0a0a0a);">
-        ${p.image ? `
-          <img src="${p.image}" alt="${p.name}" class="product-actual-img">
-          <div class="shimmer-overlay"></div>
-        ` : `
-          <div class="product-img-placeholder" style="box-shadow: 0 0 30px ${p.color}88;"></div>
-        `}
+  productsGrid.innerHTML = filtered.map((p, i) => {
+    const hasDiscount = settings.discountEnabled && settings.globalDiscount > 0;
+    const finalPrice = hasDiscount ? Math.floor(p.price * (1 - settings.globalDiscount / 100)) : p.price;
+    
+    return `
+      <div class="product-card glass-panel" data-id="${p.id}" style="animation: fadeUp 0.6s ease forwards ${i * 0.1}s; opacity:0; --card-glow: ${p.color}44;">
+        <div class="product-image-container" style="background: linear-gradient(145deg, ${p.color}, #0a0a0a);">
+          ${p.image ? `
+            <img src="${p.image}" alt="${p.name}" class="product-actual-img">
+            <div class="shimmer-overlay"></div>
+          ` : `
+            <div class="product-img-placeholder" style="box-shadow: 0 0 30px ${p.color}88;"></div>
+          `}
+        </div>
+        <h3 class="product-title">${p.name}</h3>
+        <p class="product-desc">${p.desc}</p>
+        <div class="product-price">
+          ${hasDiscount ? `<span class="original-price">GH₵${p.price}</span>` : ''}
+          <span class="current-price">GH₵${finalPrice}</span>
+        </div>
+        <div class="product-actions">
+          <button class="btn-secondary order-btn" data-id="${p.id}">Order Now</button>
+          <button class="btn-icon wishlist-toggle ${wishlist.includes(p.id) ? 'active' : ''}" data-id="${p.id}" aria-label="Add to wishlist">
+            ${wishlist.includes(p.id) ? '♥' : '♡'}
+          </button>
+        </div>
       </div>
-      <h3 class="product-title">${p.name}</h3>
-      <p class="product-desc">${p.desc}</p>
-      <p class="product-price">$${p.price}</p>
-      <div class="product-actions">
-        <button class="btn-secondary order-btn" data-id="${p.id}">Order Now</button>
-        <button class="btn-icon wishlist-toggle ${wishlist.includes(p.id) ? 'active' : ''}" data-id="${p.id}" aria-label="Add to wishlist">
-          ${wishlist.includes(p.id) ? '♥' : '♡'}
-        </button>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 // ========== WISHLIST ==========
@@ -93,7 +140,7 @@ function updateWishlistUI() {
       <div class="wishlist-item-img" style="background: linear-gradient(135deg, ${item.color}, #0a0a0a);"></div>
       <div class="wishlist-item-info">
         <div class="wishlist-item-title">${item.name}</div>
-        <div class="wishlist-item-price">$${item.price}</div>
+        <div class="wishlist-item-price">GH₵${item.price}</div>
       </div>
       <button class="remove-item" data-id="${item.id}" aria-label="Remove">✕</button>
     `;
@@ -123,7 +170,7 @@ function openProductModal(id) {
 
   document.getElementById('modalTitle').textContent = product.name;
   document.getElementById('modalCategory').textContent = product.category;
-  document.getElementById('modalPrice').textContent = `$${product.price}`;
+  document.getElementById('modalPrice').textContent = `GH₵${product.price}`;
   document.getElementById('modalDescription').textContent = product.desc;
 
   const modalImgContainer = document.getElementById('modalImage');
@@ -166,7 +213,7 @@ productsGrid.addEventListener('click', (e) => {
   if (orderBtn) {
     const product = products.find(p => p.id === Number(orderBtn.dataset.id));
     if (product) {
-      const msg = `Hi Owl Colognes! I'd like to order *${product.name}* ($${product.price}). Please let me know the next steps.`;
+      const msg = `Hi Owl Colognes! I'd like to order *${product.name}* (GH₵${product.price}). Please let me know the next steps.`;
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
     }
     return;
@@ -216,7 +263,7 @@ document.getElementById('sendWishlistWA').addEventListener('click', (e) => {
   e.preventDefault();
   if (wishlist.length === 0) return;
   const items = wishlist.map(id => products.find(p => p.id === id)).filter(Boolean);
-  const msg = `Hi Owl Colognes! Here's my wishlist:\n\n${items.map(i => `• ${i.name} – $${i.price}`).join('\n')}\n\nPlease let me know about availability!`;
+  const msg = `Hi Owl Colognes! Here's my wishlist:\n\n${items.map(i => `• ${i.name} – GH₵${i.price}`).join('\n')}\n\nPlease let me know about availability!`;
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
 });
 
@@ -246,6 +293,49 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     }
   });
 });
+
+// ========== HIDDEN ADMIN ACCESS ==========
+const ADMIN_PASSWORD = 'owl-admin-secret'; // Change this to your preferred password
+let logoClickCount = 0;
+let logoClickTimer;
+
+function handleAdminAccess() {
+  const pwd = prompt("Enter Admin Password:");
+  if (pwd === ADMIN_PASSWORD) {
+    sessionStorage.setItem('owlAdminAuth', 'true');
+    window.location.href = 'admin.html';
+  } else if (pwd !== null) {
+    alert("Incorrect password.");
+  }
+}
+
+// 1. Ctrl + Shift + A
+window.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.shiftKey && e.code === 'KeyA') {
+    e.preventDefault();
+    handleAdminAccess();
+  }
+});
+
+// 2. Tap logo 5 times
+const logoImg = document.querySelector('.logo img');
+if (logoImg) {
+  logoImg.style.cursor = 'pointer';
+  logoImg.addEventListener('click', (e) => {
+    e.preventDefault();
+    logoClickCount++;
+    clearTimeout(logoClickTimer);
+    
+    if (logoClickCount === 5) {
+      logoClickCount = 0;
+      handleAdminAccess();
+    } else {
+      logoClickTimer = setTimeout(() => {
+        logoClickCount = 0;
+      }, 2000); // Reset count if not clicked 5 times within 2s
+    }
+  });
+}
 
 // ========== PARTICLES ==========
 const canvas = document.getElementById('heroParticles');

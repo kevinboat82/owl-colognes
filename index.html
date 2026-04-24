@@ -14,6 +14,11 @@
   <div class="bg-glow"></div>
   <div class="bg-glow-2"></div>
 
+  <!-- Global Discount Banner -->
+  <div id="discountBanner" class="discount-banner">
+    <span id="discountMsg"></span>
+  </div>
+
   <!-- Navigation -->
   <nav id="mainNav">
     <div class="nav-container" style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
@@ -54,10 +59,15 @@
 
   <!-- Hero Section -->
   <section class="hero" id="hero">
-    <canvas id="heroParticles"></canvas>
-    <h1>Scent of<br>Distinction</h1>
-    <p>Curated luxury fragrances for the bold and refined. Each bottle tells a story of elegance, crafted for those who dare to leave an impression.</p>
-    <a href="#collection" class="btn-primary">Explore Collection</a>
+    <div class="hero-slideshow" id="heroSlideshow"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">Experience the Art of <span>Scent</span></h1>
+      <p class="hero-subtitle">Curated Luxury Fragrances for the Discerning Soul</p>
+      <div class="hero-btns">
+        <a href="#collection" class="btn-primary">Explore Collection</a>
+        <a href="#request" class="btn-outline">Custom Request</a>
+      </div>
+    </div>
   </section>
 
   <!-- About Section -->
