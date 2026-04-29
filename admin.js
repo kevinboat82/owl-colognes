@@ -48,7 +48,19 @@ function renderAll() {
 }
 
 function renderProductsTable() {
-  productTableBody.innerHTML = products.map(p => `
+  productTableBody.innerHTML = products.map(p => {
+    // Badge display logic
+    let badgeHTML = '';
+    const isNew = p.createdAt && p.createdAt.toDate && (Date.now() - p.createdAt.toDate().getTime()) < 14 * 24 * 60 * 60 * 1000;
+    if (p.bestseller) {
+      badgeHTML = '<span class="table-badge bestseller">★ Bestseller</span>';
+    } else if (isNew) {
+      badgeHTML = '<span class="table-badge new-arrival">New</span>';
+    } else {
+      badgeHTML = '<span style="color: var(--text-secondary); font-size: 0.8rem;">—</span>';
+    }
+
+    return `
     <tr>
       <td>
         <div style="display: flex; align-items: center; gap: 10px;">
@@ -61,12 +73,14 @@ function renderProductsTable() {
       <td><span style="text-transform: capitalize;">${p.category}</span></td>
       <td>GH₵${p.price}</td>
       <td>${p.stock}</td>
+      <td>${badgeHTML}</td>
       <td>
         <button class="action-btn edit-btn" onclick="editProduct('${p.docId}')">Edit</button>
         <button class="action-btn delete-btn" onclick="deleteProduct('${p.docId}')">Delete</button>
       </td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function renderInventoryTable() {
@@ -128,6 +142,8 @@ window.editProduct = (docId) => {
   document.getElementById('prodStock').value = p.stock;
   document.getElementById('prodDesc').value = p.desc;
   document.getElementById('prodColor').value = p.color;
+  document.getElementById('prodBestseller').checked = p.bestseller || false;
+  updateBestsellerToggleVisual();
   
   document.getElementById('formModalTitle').textContent = 'Edit Product';
   productFormModal.classList.add('active');
@@ -167,6 +183,8 @@ async function uploadImage(file) {
 document.getElementById('addNewBtn').onclick = () => {
   productForm.reset();
   document.getElementById('editId').value = '';
+  document.getElementById('prodBestseller').checked = false;
+  updateBestsellerToggleVisual();
   document.getElementById('formModalTitle').textContent = 'Add New Product';
   productFormModal.classList.add('active');
 };
@@ -202,6 +220,7 @@ productForm.onsubmit = async (e) => {
       desc: document.getElementById('prodDesc').value,
       color: document.getElementById('prodColor').value || '#1a1a1a',
       image: imageUrl,
+      bestseller: document.getElementById('prodBestseller').checked,
       updatedAt: serverTimestamp()
     };
 
@@ -292,6 +311,19 @@ document.getElementById('logoutBtn').onclick = () => {
   sessionStorage.removeItem('owlAdminAuth');
   window.location.href = 'index.html';
 };
+
+// ========== BESTSELLER TOGGLE VISUAL ==========
+function updateBestsellerToggleVisual() {
+  const label = document.getElementById('bestsellerToggleLabel');
+  const checkbox = document.getElementById('prodBestseller');
+  if (checkbox.checked) {
+    label.classList.add('bestseller-active');
+  } else {
+    label.classList.remove('bestseller-active');
+  }
+}
+
+document.getElementById('prodBestseller').addEventListener('change', updateBestsellerToggleVisual);
 
 // Initial Render
 initAdmin();

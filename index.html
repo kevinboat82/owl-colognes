@@ -42,12 +42,12 @@
 
   <!-- Navigation -->
   <nav id="mainNav">
-    <div class="nav-container" style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+    <div class="nav-container">
       <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 15px;">
         <img src="owl.png" alt="Owl Logo" style="height: 45px; width: auto; filter: drop-shadow(0 0 10px rgba(212,175,55,0.3));">
-        Owl <span>Colognes</span>
+        <span style="display: flex; align-items: center;">Owl <span style="margin-left: 8px;">Colognes</span></span>
       </a>
-      <ul class="nav-links">
+      <ul class="nav-links" style="margin: 0; padding: 0;">
         <li><a href="#collection">Collection</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#request">Request</a></li>
@@ -87,22 +87,105 @@
     <a href="#collection" class="btn-primary">Explore Collection</a>
   </section>
 
+  <!-- Brand Marquee -->
+  <section class="marquee-section">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <span class="marquee-brand">Tom Ford</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">YSL</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Dior</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Armaf</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Versace</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Chanel</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Creed</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Gucci</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Lattafa</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Prada</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Dolce & Gabbana</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Bvlgari</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Al Haramain</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Oriflame</span>
+        <span class="marquee-dot">✦</span>
+      </div>
+      <div class="marquee-content" aria-hidden="true">
+        <span class="marquee-brand">Tom Ford</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">YSL</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Dior</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Armaf</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Versace</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Chanel</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Creed</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Gucci</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Lattafa</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Prada</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Dolce & Gabbana</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Bvlgari</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Al Haramain</span>
+        <span class="marquee-dot">✦</span>
+        <span class="marquee-brand">Oriflame</span>
+        <span class="marquee-dot">✦</span>
+      </div>
+    </div>
+  </section>
+
   <!-- Why Owl Colognes -->
   <section class="features-section" id="features">
     <h2 class="section-title reveal">Why Owl <span style="color: var(--accent-gold);">Colognes</span></h2>
     <div class="features-grid">
       <div class="feature-card glass-panel reveal">
-        <div class="feature-icon">✦</div>
+        <div class="feature-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feature-svg">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <polyline points="9 12 11 14 15 10"></polyline>
+          </svg>
+        </div>
         <h3>100% Authentic</h3>
         <p>Every bottle is sourced directly from certified distributors. No imitations, no compromises — only the real thing.</p>
       </div>
       <div class="feature-card glass-panel reveal">
-        <div class="feature-icon">🌍</div>
+        <div class="feature-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feature-svg">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+        </div>
         <h3>Globally Sourced</h3>
         <p>From Parisian ateliers to Arabian oud houses, we scour the world to bring you rare and timeless scents.</p>
       </div>
       <div class="feature-card glass-panel reveal">
-        <div class="feature-icon">🚀</div>
+        <div class="feature-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feature-svg">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+        </div>
         <h3>Swift Delivery</h3>
         <p>Order via WhatsApp and receive your fragrance within Accra in 24 hours, or nationwide within 3–5 days.</p>
       </div>
@@ -118,14 +201,58 @@
     </div>
   </section>
 
+  <!-- Stats Counter -->
+  <section class="stats-section" id="stats">
+    <div class="stats-grid">
+      <div class="stat-item reveal">
+        <div class="stat-number" data-target="500">0</div>
+        <div class="stat-suffix">+</div>
+        <p class="stat-label">Happy Clients</p>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item reveal">
+        <div class="stat-number" data-target="80">0</div>
+        <div class="stat-suffix">+</div>
+        <p class="stat-label">Fragrances</p>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item reveal">
+        <div class="stat-number" data-target="24">0</div>
+        <div class="stat-suffix">hr</div>
+        <p class="stat-label">Accra Delivery</p>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item reveal">
+        <div class="stat-number" data-target="100">0</div>
+        <div class="stat-suffix">%</div>
+        <p class="stat-label">Authentic</p>
+      </div>
+    </div>
+  </section>
+
   <!-- Collection Section -->
   <section class="products" id="collection">
     <h2 class="section-title reveal">The Collection</h2>
+    <!-- Search Bar -->
+    <div class="search-container reveal">
+      <div class="search-wrapper">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search for a fragrance..." autocomplete="off">
+        <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
+      </div>
+    </div>
     <div class="filter-bar">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="men">Men</button>
       <button class="filter-btn" data-filter="women">Women</button>
       <button class="filter-btn" data-filter="unisex">Unisex</button>
+    </div>
+    <!-- No Results State -->
+    <div class="no-results" id="noResults" style="display: none;">
+      <div class="no-results-icon">🦉💨</div>
+      <h3>Whoops… our owl couldn't sniff that one out!</h3>
+      <p>Looks like <strong id="noResultsQuery"></strong> hasn't landed in our nest yet.<br>But hey, we're <em>legendary</em> scent hunters.</p>
+      <a href="#request" class="btn-primary hero-btn-override no-results-btn" id="requestMissingScent">🔍 Request This Scent</a>
     </div>
     <div class="products-grid" id="productsGrid">
       <!-- Products rendered by JS -->
@@ -218,16 +345,6 @@
     </div>
   </section>
 
-  <!-- CTA Banner -->
-  <section class="cta-banner reveal">
-    <div class="cta-content">
-      <h2>Ready to Find Your Signature Scent?</h2>
-      <p>Chat with us on WhatsApp and let our fragrance experts guide you to the perfect bottle.</p>
-      <a href="https://wa.me/233504005055?text=Hi%20Owl%20Colognes!%20I%27d%20like%20to%20explore%20your%20fragrances." class="btn-primary hero-btn-override" target="_blank" rel="noopener">
-        💬 Chat With Us Now
-      </a>
-    </div>
-  </section>
 
   <!-- Product Detail Modal -->
   <div class="product-modal" id="productModal">

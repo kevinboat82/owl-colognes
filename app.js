@@ -34,14 +34,49 @@ function initStorefront() {
 }
 
 // ========== RENDER PRODUCTS ==========
+let currentSearch = '';
+
 function renderProducts(filter = 'all') {
-  const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+  const searchTerm = currentSearch.toLowerCase().trim();
+  let filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+
+  // Apply search filter
+  if (searchTerm) {
+    filtered = filtered.filter(p =>
+      p.name.toLowerCase().includes(searchTerm) ||
+      (p.desc && p.desc.toLowerCase().includes(searchTerm)) ||
+      (p.category && p.category.toLowerCase().includes(searchTerm))
+    );
+  }
+
+  const noResults = document.getElementById('noResults');
+  const noResultsQuery = document.getElementById('noResultsQuery');
+
+  if (filtered.length === 0 && searchTerm) {
+    productsGrid.innerHTML = '';
+    noResultsQuery.textContent = `"${currentSearch}"`;
+    noResults.style.display = 'block';
+    return;
+  } else {
+    noResults.style.display = 'none';
+  }
+
   productsGrid.innerHTML = filtered.map((p, i) => {
     const discount = p.discount || 0;
     const finalPrice = discount > 0 ? (p.price * (1 - discount / 100)).toFixed(2) : p.price;
     const priceHTML = discount > 0 
       ? `<span class="product-price-final">GH₵${finalPrice}</span> <span class="product-price-original">GH₵${p.price}</span> <span class="product-discount-badge">-${discount}%</span>`
       : `GH₵${p.price}`;
+
+    // Badge logic
+    let badgeHTML = '';
+    const isNew = p.createdAt && (Date.now() - p.createdAt.toDate().getTime()) < 14 * 24 * 60 * 60 * 1000;
+    if (p.bestseller) {
+      badgeHTML = `<div class="card-badge badge-bestseller">★ Bestseller</div>`;
+    } else if (isNew) {
+      badgeHTML = `<div class="card-badge badge-new">New</div>`;
+    }
+
     return `
     <div class="product-card glass-panel" data-id="${p.docId}" style="animation: fadeUp 0.6s ease forwards ${i * 0.1}s; opacity:0; --card-glow: ${p.color}44;">
       <div class="product-image-container" style="background: linear-gradient(145deg, ${p.color}, #0a0a0a);">
@@ -52,9 +87,10 @@ function renderProducts(filter = 'all') {
           <div class="product-img-placeholder" style="box-shadow: 0 0 30px ${p.color}88;"></div>
         `}
         ${discount > 0 ? `<div class="card-discount-tag">-${discount}%</div>` : ''}
+        ${badgeHTML}
       </div>
       <h3 class="product-title">${p.name}</h3>
-      <p class="product-desc">${p.desc}</p>
+      <p class="product-category-tag">${p.category || ''}</p>
       <p class="product-price">${priceHTML}</p>
       <div class="product-actions">
         <button class="btn-secondary order-btn" data-id="${p.docId}" data-price="${finalPrice}">Order Now</button>
@@ -191,6 +227,42 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
   });
 });
 
+// ========== SEARCH ==========
+const searchInput = document.getElementById('searchInput');
+const searchClear = document.getElementById('searchClear');
+let searchDebounce = null;
+
+searchInput.addEventListener('input', () => {
+  clearTimeout(searchDebounce);
+  const val = searchInput.value;
+  searchClear.classList.toggle('visible', val.length > 0);
+
+  searchDebounce = setTimeout(() => {
+    currentSearch = val;
+    renderProducts(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
+  }, 250);
+});
+
+searchClear.addEventListener('click', () => {
+  searchInput.value = '';
+  searchClear.classList.remove('visible');
+  currentSearch = '';
+  renderProducts(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
+  searchInput.focus();
+});
+
+// Pre-fill request form when "Request This Scent" is clicked
+document.getElementById('requestMissingScent').addEventListener('click', (e) => {
+  // Let the hash navigation happen, then pre-fill the form
+  setTimeout(() => {
+    const reqPerfumeInput = document.getElementById('reqPerfume');
+    if (reqPerfumeInput && currentSearch) {
+      reqPerfumeInput.value = currentSearch;
+      reqPerfumeInput.focus();
+    }
+  }, 500);
+});
+
 // Wishlist sidebar
 document.getElementById('openWishlist').addEventListener('click', () => {
   wishlistSidebar.classList.add('open');
@@ -261,6 +333,40 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ========== STATS COUNTER ANIMATION ==========
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const duration = 2000;
+  const startTime = performance.now();
+
+  function update(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // Ease-out cubic for a satisfying deceleration
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(eased * target);
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    } else {
+      el.textContent = target;
+    }
+  }
+  requestAnimationFrame(update);
+}
+
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const counters = entry.target.querySelectorAll('.stat-number');
+      counters.forEach(counter => animateCounter(counter));
+      statsObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+const statsSection = document.getElementById('stats');
+if (statsSection) statsObserver.observe(statsSection);
 
 // ========== PARTICLES ==========
 const canvas = document.getElementById('heroParticles');
