@@ -147,6 +147,7 @@ window.editProduct = (docId) => {
   
   document.getElementById('formModalTitle').textContent = 'Edit Product';
   productFormModal.classList.add('active');
+  document.body.classList.add('modal-open');
 };
 
 window.deleteProduct = async (docId) => {
@@ -187,10 +188,12 @@ document.getElementById('addNewBtn').onclick = () => {
   updateBestsellerToggleVisual();
   document.getElementById('formModalTitle').textContent = 'Add New Product';
   productFormModal.classList.add('active');
+  document.body.classList.add('modal-open');
 };
 
 document.getElementById('closeFormBtn').onclick = () => {
   productFormModal.classList.remove('active');
+  document.body.classList.remove('modal-open');
 };
 
 productForm.onsubmit = async (e) => {
@@ -232,6 +235,7 @@ productForm.onsubmit = async (e) => {
     }
 
     productFormModal.classList.remove('active');
+    document.body.classList.remove('modal-open');
     productForm.reset();
   } catch (err) {
     alert("Error saving product: " + err.message);

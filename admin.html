@@ -136,13 +136,18 @@
       backdrop-filter: blur(5px);
       display: none;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       z-index: 3000;
+      overflow-y: auto;
+      padding: 40px 20px;
     }
     .modal-admin.active { display: flex; }
+    body.modal-open { overflow: hidden; }
     .modal-admin-content {
       width: 500px;
       padding: 40px;
+      margin: auto 0;
+      flex-shrink: 0;
     }
     .stats-grid {
       display: grid;
